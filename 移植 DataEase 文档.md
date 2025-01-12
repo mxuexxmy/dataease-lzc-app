@@ -192,6 +192,88 @@ lazycat-registry: registry.lazycat.cloud/mxuexxmy/wojiushixiaobai/dataease:664c8
 
 
 
+由于使用 `lzc-dtl` 工具转换的配置有问题，所以使用原生的移植方法处理 
+
+参考[移植应用](https://developer.lazycat.cloud/app-example-porting.html)文档
+
+由于之前使用过 `lzc-dtl` 工具，所以已经存在 `icon.png` 图片
+
+
+
+编写 `lzc-build.yml` 文档
+
+```shell
+pkgout: ./ # 输出的lpk包的位置
+icon: ./icon.png   # 图标文件的位置
+```
+
+
+
+编写 `lzc-manifest.yml` 文档
+
+```shell
+lzc-sdk-version: "0.1"
+name: DataEase
+package: cloud.lazycat.app.dataease
+version: 0.0.1
+description: 人人可用的开源数据可视化分析工具
+homepage: ""
+author: fit2cloud
+application:
+  subdomain: dataease
+  background_task: false
+  multi_instance: false
+  gpu_accel: false
+  kvm_accel: false
+  usb_accel: false
+  routes:
+    - /=http://core.cloud.lazycat.app.dataease.lzcapp:8100/
+services:
+  mysql:
+    image: registry.lazycat.cloud/mxuexxmy/library/mariadb:8b7e78cbb12dae4f
+    environment:
+      - TZ=Asia/Shanghai
+      - MARIADB_DATABASE=dataease
+      - MARIADB_ROOT_PASSWORD=nu4x599Wq7u0Bn8EABh3J91G
+    binds:
+      - /lzcapp/var/data/mariadb/data:/var/lib/mysql
+    health_check:
+      test:
+        - CMD-SHELL
+        - "mysql -h127.0.0.1 -uroot -pnu4x599Wq7u0Bn8EABh3J91G -e 'SHOW DATABASES;'"
+      start_period: 90s
+      disable: false
+  core:
+    image: registry.lazycat.cloud/mxuexxmy/wojiushixiaobai/dataease:664c85b73842c6c7
+    environment:
+      - TZ=Asia/Shanghai
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=dataease
+      - DB_USER=root
+      - DB_PASSWORD=nu4x599Wq7u0Bn8EABh3J91G
+    depends_on:
+      - mysql
+    binds:
+      - /lzcapp/var/data/core/data:/opt/dataease2.0/data
+      - /lzcapp/var/data/core/geo:/opt/dataease2.0/data/geo
+      - /lzcapp/var/data/core/logs:/opt/dataease2.0/logs
+      - /lzcapp/var/data/core/cache:/opt/dataease2.0/cache
+unsupported_platforms:
+  - ios
+  - android
+```
+
+
+
+构建应用
+
+```shell
+lzc-cli project build -o cloud.lazycat.app.dataease.lpk
+```
+
+
+
 安装测试测试
 
 ```shell
