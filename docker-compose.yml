@@ -1,0 +1,52 @@
+services:
+  mysql:
+    image: mariadb:10.6
+    container_name: de_mysql
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+      MARIADB_DATABASE: dataease
+      MARIADB_ROOT_PASSWORD: nu4x599Wq7u0Bn8EABh3J91G
+    volumes:
+      - ./data/mariadb/data:/var/lib/mysql
+    healthcheck:
+      test: "mysql -h127.0.0.1 -uroot -pnu4x599Wq7u0Bn8EABh3J91G -e 'SHOW DATABASES;'"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - net
+
+  core:
+    image: wojiushixiaobai/dataease:v2.10.4
+    container_name: de_core
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: dataease
+      DB_USER: root
+      DB_PASSWORD: nu4x599Wq7u0Bn8EABh3J91G
+    ports:
+      - 8100:8100
+    volumes:
+      - ./data/core/data:/opt/dataease2.0/data
+      - ./data/core/data/geo:/opt/dataease2.0/data/geo
+      - ./data/core/logs:/opt/dataease2.0/logs
+      - ./data/core/cache:/opt/dataease2.0/cache
+    healthcheck:
+      test: "check http://localhost:8100"
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 90s
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - net
+
+networks:
+  net:

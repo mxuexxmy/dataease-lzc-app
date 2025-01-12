@@ -1,0 +1,50 @@
+{
+  "name": "DataEase",
+  "package": "cloud.lazycat.app.dataease",
+  "description": "人人可用的开源数据可视化分析工具",
+  "homepage": "",
+  "author": "fit2cloud",
+  "app_features": [],
+  "subdomain": "dataease",
+  "version": "0.0.1",
+  "iconPath": "lzc-icon.png",
+  "composePath": "docker-compose.yml",
+  "unsupported_platforms": [
+    "ios",
+    "android"
+  ],
+  "lastRouteType": "from_compose",
+  "port_mappings": {
+    "core_${HTTP_PORT_-8100}": {
+      "use": false
+    },
+    "core_8100_8100": {
+      "use": true,
+      "type": "http",
+      "path": "/",
+      "targetPath": "/"
+    }
+  },
+  "image_mariadb_10.6": {
+    "originalImage": "mariadb:10.6",
+    "pushTarget": "lazycat",
+    "newImageName": "registry.lazycat.cloud/mxuexxmy/library/mariadb:8b7e78cbb12dae4f",
+    "timestamp": "2025-01-12T02:35:46.999Z"
+  },
+  "mysql_volume_/var/lib/mysql_action": "emptyDir",
+  "mysql_volume_/var/lib/mysql_location": "app_data",
+  "image_wojiushixiaobai_dataease_v2.10.4": {
+    "originalImage": "wojiushixiaobai/dataease:v2.10.4",
+    "pushTarget": "lazycat",
+    "newImageName": "registry.lazycat.cloud/mxuexxmy/wojiushixiaobai/dataease:664c85b73842c6c7",
+    "timestamp": "2025-01-12T02:36:51.398Z"
+  },
+  "core_volume_/opt/dataease2.0/data_action": "emptyDir",
+  "core_volume_/opt/dataease2.0/data_location": "app_data",
+  "core_volume_/opt/dataease2.0/data/geo_action": "emptyDir",
+  "core_volume_/opt/dataease2.0/data/geo_location": "app_data",
+  "core_volume_/opt/dataease2.0/logs_action": "emptyDir",
+  "core_volume_/opt/dataease2.0/logs_location": "app_data",
+  "core_volume_/opt/dataease2.0/cache_action": "emptyDir",
+  "core_volume_/opt/dataease2.0/cache_location": "app_data"
+}

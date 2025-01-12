@@ -1,0 +1,54 @@
+lzc-sdk-version: "0.1"
+name: DataEase
+package: cloud.lazycat.app.dataease
+version: 0.0.1
+description: 人人可用的开源数据可视化分析工具
+homepage: ""
+author: fit2cloud
+application:
+  subdomain: dataease
+  background_task: false
+  multi_instance: false
+  gpu_accel: false
+  kvm_accel: false
+  usb_accel: false
+  routes:
+    - /=http://core.cloud.lazycat.app.dataease.lzcapp:8100/
+services:
+  mysql:
+    image: registry.lazycat.cloud/mxuexxmy/library/mariadb:8b7e78cbb12dae4f
+    environment:
+      - TZ=Asia/Shanghai
+      - MARIADB_DATABASE=dataease
+      - MARIADB_ROOT_PASSWORD=nu4x599Wq7u0Bn8EABh3J91G
+    binds:
+      - /lzcapp/var/mysql:/var/lib/mysql
+    health_check:
+      test:
+        - CMD-SHELL
+        - "mysql -h127.0.0.1 -uroot -pnu4x599Wq7u0Bn8EABh3J91G -e 'SHOW DATABASES;'"
+      start_period: 30s
+  core:
+    image: registry.lazycat.cloud/mxuexxmy/wojiushixiaobai/dataease:664c85b73842c6c7
+    environment:
+      - TZ=Asia/Shanghai
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=dataease
+      - DB_USER=root
+      - DB_PASSWORD=nu4x599Wq7u0Bn8EABh3J91G
+    depends_on:
+      - mysql
+    binds:
+      - /lzcapp/var/data:/opt/dataease2.0/data
+      - /lzcapp/var/geo:/opt/dataease2.0/data/geo
+      - /lzcapp/var/logs:/opt/dataease2.0/logs
+      - /lzcapp/var/cache:/opt/dataease2.0/cache
+    health_check:
+      test:
+        - CMD-SHELL
+        - "curl -f http://localhost:8100/ || exit 1"
+      start_period: 90s
+unsupported_platforms:
+  - ios
+  - android
