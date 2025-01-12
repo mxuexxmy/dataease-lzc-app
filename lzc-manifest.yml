@@ -45,6 +45,3 @@ services:
       - /lzcapp/var/data/core/geo:/opt/dataease2.0/data/geo
       - /lzcapp/var/data/core/logs:/opt/dataease2.0/logs
       - /lzcapp/var/data/core/cache:/opt/dataease2.0/cache
-unsupported_platforms:
-  - ios
-  - android
